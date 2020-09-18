@@ -21,9 +21,9 @@ namespace BlazorWithIdentity.Shared.Services
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<IEnumerable<OperationTypeRequest>> GetOperationType()
+        public async Task<IEnumerable<OperationType>> GetOperationType()
         {
-            var result = await client.GetJsonAsync<IEnumerable<OperationTypeRequest>>("api/operationtype");
+            var result = await client.GetJsonAsync<IEnumerable<OperationType>>("api/operationtype");
             return result;
             //HttpResponseMessage response = await client.GetAsync("api/platesepc");
         }

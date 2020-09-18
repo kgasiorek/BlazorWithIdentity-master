@@ -11,7 +11,7 @@ namespace BlazorWithIdentity.Shared
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Typ jest wymagany")]
-        [StringLength(2) ]
+        [StringLength(10)]
         public string Type { get; set; }
 
         [Required(ErrorMessage = "Data jest wymagana")]

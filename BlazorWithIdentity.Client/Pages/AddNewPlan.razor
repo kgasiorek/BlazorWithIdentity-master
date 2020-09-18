@@ -12,7 +12,11 @@
     <DxFormLayout>
         <DxFormLayoutItem Caption="Typ:" ColSpanMd="6">
             <Template>
-                <DxComboBox TData="OperationTypeRequest" TValue="OperationTypeRequest" Data="@operations"
+                <DxComboBox TData="OperationType" TValue="OperationType" 
+                           Data="@operations"
+                           TextFieldName="@nameof(OperationType.Type)"
+                           ValueFieldName="@nameof(OperationType.TypeShort)"
+                           ValueExpression="@(() => value)"
                            @bind-Text="@planRequest.Type"/>
             </Template>
         </DxFormLayoutItem>
@@ -63,7 +67,8 @@
 
     bool SuccessPopupVisible = false;
     string message = "";
-    IEnumerable<OperationTypeRequest> operations;
+    IEnumerable<OperationType> operations;
+    OperationType value = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -82,7 +87,6 @@
 
     async Task postPlanAsync()
     {
-
         var result = await plansService.CreateProductAsync(planRequest);
         message = result.ToString();
         SuccessPopupVisible = true;
