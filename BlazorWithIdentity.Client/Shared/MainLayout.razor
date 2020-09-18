@@ -1,0 +1,47 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager navigationManager
+@inject IdentityAuthenticationStateProvider authStateProvider
+
+<AuthorizeView>
+    <Authorized>
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+
+        <div class="main">
+            <div class="top-row px-4">
+                <div class="c">
+                    <DxButton RenderStyle="@ButtonRenderStyle.Light" Click="@LogoutClick" RenderStyleMode="@ButtonRenderStyleMode.Contained" Text="Wyloguj" />
+                </div>
+            </div>
+            <div class="content px-4">
+                @Body
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@functions{
+    DateTime time = new DateTime();
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!(await AuthenticationState).User.Identity.IsAuthenticated)
+        {
+            navigationManager.NavigateTo("/login");
+        }
+    }
+
+    async void LogoutClick(MouseEventArgs args)
+    {
+        await authStateProvider.Logout();
+        navigationManager.NavigateTo("/login");
+    }
+
+    void CurrentTime()
+    {
+        time = DateTime.Now;
+    }
+}

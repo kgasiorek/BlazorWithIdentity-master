@@ -1,0 +1,89 @@
+﻿@page "/addnewplan"
+@inject PlansService plansService
+@inject OperationTypeService operationTypeService
+@using BlazorWithIdentity.Shared.Models
+
+<div>
+    <h2>Dodaj nowy plan</h2>
+</div>
+
+<EditForm Model="@planRequest" OnValidSubmit="async () => await postPlanAsync()" Context="EditFormContext">
+    <DataAnnotationsValidator />
+    <DxFormLayout>
+        <DxFormLayoutItem Caption="Typ:" ColSpanMd="6">
+            <Template>
+                <DxComboBox TData="OperationTypeRequest" TValue="OperationTypeRequest" Data="@operations"></DxComboBox>
+            </Template>
+        </DxFormLayoutItem>
+
+        <DxFormLayoutItem Caption="Data:" ColSpanMd="6">
+            <Template>
+                <DxDateEdit @bind-Date="@planRequest.Date" />
+            </Template>
+        </DxFormLayoutItem>
+
+        <DxFormLayoutItem Caption="Rejestracja:" ColSpanMd="6">
+            <Template>
+                <DxTextBox @bind-Text="@planRequest.Plate" />
+            </Template>
+        </DxFormLayoutItem>
+
+        <DxFormLayoutItem Caption="Firma:" ColSpanMd="6">
+            <Template>
+                <DxTextBox @bind-Text="@planRequest.Company" />
+            </Template>
+        </DxFormLayoutItem>
+
+        <DxFormLayoutItem Caption="Kierowca:">
+            <Template>
+                <DxTextBox @bind-Text="@planRequest.Driver" />
+            </Template>
+        </DxFormLayoutItem>
+    </DxFormLayout>
+    <DxButton RenderStyle="@ButtonRenderStyle.Success" SubmitFormOnClick="true" RenderStyleMode="@ButtonRenderStyleMode.Contained" Text="Zapisz" />
+    <DxButton RenderStyle="@ButtonRenderStyle.Warning" RenderStyleMode="@ButtonRenderStyleMode.Contained" Text="Anuluj" />
+    <ValidationSummary />
+</EditForm>
+
+<DxPopup HeaderText="Udało się"
+         @bind-Visible="@SuccessPopupVisible">
+    <Content>
+        <p>
+            Plan został dodany prawidłowo.
+        </p>
+    </Content>
+    <FooterTemplate>
+        <button class="btn btn-primary" @onclick="@(() => SuccessPopupVisible = false)">OK!</button>
+    </FooterTemplate>
+</DxPopup>
+
+
+@code {
+
+    bool SuccessPopupVisible = false;
+    string message = "";
+    IEnumerable<OperationTypeRequest> operations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOperationsAsync();
+    }
+
+    async Task GetOperationsAsync()
+    {
+        operations = await operationTypeService.GetOperationType();
+    }
+
+    PlanRequest planRequest = new PlanRequest()
+    {
+        Date = DateTime.Today
+    };
+
+    async Task postPlanAsync()
+    {
+
+        var result = await plansService.CreateProductAsync(planRequest);
+        message = result.ToString();
+        SuccessPopupVisible = true;
+    }
+}

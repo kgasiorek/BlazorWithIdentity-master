@@ -1,0 +1,50 @@
+﻿<div class="top-row pl-4 navbar navbar-light">
+    <a class="navbar-brand" href="#">
+        <img style="max-width:150px; margin-top:-7px; justify-content: flex-end;"
+             src="/css/themes/dist/Images/logo_awsc.png">
+    </a>
+    <button class="navbar-toggler" @onclick="@ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="@ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3 margin-top-px-10">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Główna
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="addnewplan">
+                <span class="oi oi-plus" aria-hidden="true"></span> Dodaj pojazd
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="showplan">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Pokaż plan
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="manualweighting">
+                <span class="oi oi-person" aria-hidden="true"></span> Sterowanie ręczne
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="options">
+                <span class="oi oi-menu" aria-hidden="true"></span> Opcje
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+@functions {
+    bool collapseNavMenu = true;
+
+    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

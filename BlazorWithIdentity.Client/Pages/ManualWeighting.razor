@@ -1,0 +1,53 @@
+﻿@page "/manualweighting"
+@using Microsoft.AspNetCore.SignalR.Client
+
+
+<h3>ManualWeighting</h3>
+
+<h3>Status połączenia: @connectionStatus</h3>
+
+<button class=" = btn btn-success" @onclick="async () => await ConnectToServer()" disabled="@isConnected">Połącz</button>
+<div class="row">
+    <div class="col-4">
+        @foreach(var item in notifications)
+        {
+            <div class="row">
+                <p>@item</p>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    string url = "http://localhost:53414/notificationhub";
+    bool isConnected = false;
+    HubConnection _connection = null;
+    List<string> notifications = new List<string>();
+    string connectionStatus = "Rozłączono";
+
+    private async Task ConnectToServer()
+    {
+        _connection = new HubConnectionBuilder()
+            .WithUrl(url)
+            .Build();
+
+
+
+        await _connection.StartAsync();
+        isConnected = true;
+        connectionStatus = "Połączono";
+
+        _connection.Closed += async (s) =>
+        {
+            isConnected = false;
+            connectionStatus = "Rozłączono";
+            await _connection.StartAsync();
+            isConnected = true;
+        };
+        _connection.On<string>("notification", m =>
+        {
+            notifications.Add(m);
+            StateHasChanged();
+        });
+    }
+}

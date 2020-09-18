@@ -1,0 +1,119 @@
+﻿@page "/options"
+@using BlazorWithIdentity.Shared.Services
+@using BlazorWithIdentity.Shared.Models
+@inject HttpClient Http
+@inject PlateEpcService plateEpc
+
+<DxTabs @bind-ActiveTabIndex="@ActiveTabIndex">
+    <DxTab Text="Powiąż EPC z rejestracją"></DxTab>
+    <DxTab Text="Ustawienia połączeń"></DxTab>
+    <DxTab Text="Support"></DxTab>
+</DxTabs>
+<div class="card dxbs-border-top-0 dxbs-border-radius-top-0">
+    <div class="card-body">
+        @switch (ActiveTabIndex)
+        {
+            case 0:
+                <EditForm Model="@plateEpcRequest" OnValidSubmit="async () => await postPlateEpcAsync()" Context="EditFormContext">
+                    <DataAnnotationsValidator />
+                    <DxFormLayout>
+                        <DxFormLayoutItem Caption="Rejestracja:" ColSpanMd="6">
+                            <Template>
+                                <DxTextBox @bind-Text="@plateEpcRequest.Plate" />
+                            </Template>
+                        </DxFormLayoutItem>
+
+                        <DxFormLayoutItem Caption="Tag EPC:" ColSpanMd="6">
+                            <Template>
+                                <DxTextBox @bind-Text="@plateEpcRequest.Epc" />
+                            </Template>
+                        </DxFormLayoutItem>
+                    </DxFormLayout>
+                    <DxButton RenderStyle="@ButtonRenderStyle.Success" SubmitFormOnClick="true" RenderStyleMode="@ButtonRenderStyleMode.Contained" Text="Dodaj" />
+                    <DxButton RenderStyle="@ButtonRenderStyle.Warning" RenderStyleMode="@ButtonRenderStyleMode.Contained" Text="Anuluj" />
+                    <ValidationSummary />
+                </EditForm>
+
+                <DxDataGrid Data="@plates"
+                            @ref="grid"
+                            ShowFilterRow="true"
+                            EditMode="@CurrentEditMode"
+                            RowRemovingAsync="@OnRowRemoving"
+                            CssClass="mw-1100 my-margin-top">
+                    <DxDataGridCommandColumn Width="100px" />
+                    <DxDataGridColumn Field="@nameof(PlateEpc.Id)">
+                    </DxDataGridColumn>
+                    <DxDataGridColumn Field="@nameof(PlateEpc.Plate)">
+                    </DxDataGridColumn>
+                    <DxDataGridColumn Field="@nameof(PlateEpc.Epc)">
+                    </DxDataGridColumn>
+                </DxDataGrid>
+
+                break;
+            case 1:
+                <i>"Products" tab is active.</i>
+                break;
+            case 2:
+                <b><i>"Support" tab is active.</i></b>
+                break;
+
+        }
+    </div>
+</div>
+
+<DxPopup HeaderText="Udało się"
+         @bind-Visible="@SuccessPopupVisible">
+    <Content>
+        <p>
+            Operacja wykonana prawidłowo.
+        </p>
+    </Content>
+    <FooterTemplate>
+        <button class="btn btn-primary" @onclick="@(() => SuccessPopupVisible = false)">OK!</button>
+    </FooterTemplate>
+</DxPopup>
+
+@code {
+
+    IEnumerable<PlateEpc> plates;
+    bool SuccessPopupVisible = false;
+    string message = "";
+    DataGridEditMode CurrentEditMode { get; set; } = DataGridEditMode.PopupEditForm;
+    DxDataGrid<PlateEpc> grid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetPlateEpcAsync();
+    }
+
+    async Task OnRowRemoving(PlateEpc dataItem)
+    {
+        var result = await plateEpc.DeletePlateEpcAsync(dataItem);
+        await grid.Refresh();
+    }
+
+    async Task GetPlateEpcAsync()
+    {
+        plates = await plateEpc.GetPlateEpcAsync();
+    }
+
+    PlateEpcRequest plateEpcRequest = new PlateEpcRequest()
+    {
+
+    };
+
+    async Task postPlateEpcAsync()
+    {
+        var result = await plateEpc.CreatePlateEpcAsync(plateEpcRequest);
+        message = result.ToString();
+        SuccessPopupVisible = true;
+        await GetPlateEpcAsync();
+    }
+
+    int activeTabIndex = 0;
+    int ActiveTabIndex
+    {
+        get => activeTabIndex;
+        set { activeTabIndex = value; InvokeAsync(StateHasChanged); }
+    }
+}

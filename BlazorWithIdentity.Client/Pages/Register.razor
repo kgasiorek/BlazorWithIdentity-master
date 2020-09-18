@@ -1,0 +1,52 @@
+﻿@page "/register"
+@layout LoginLayout
+@inject NavigationManager navigationManager
+@inject IdentityAuthenticationStateProvider authStateProvider
+
+    <h1 class="h2 font-weight-normal login-title" align="center">
+        <strong>AWSC</strong><br />Automatyczne ważenie samochodów ciężarowych
+    </h1>
+
+<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerParameters">
+    <DataAnnotationsValidator />
+    <h4 class="font-weight-normal text-center">Uwtórz konto</h4>
+
+    <label for="inputUsername" class="sr-only">Nazwa użytkownika</label>
+    <InputText id="inputUsername" class="form-control" placeholder="Nazwa użytkownika" autofocus @bind-Value="@registerParameters.UserName" />
+    <ValidationMessage For="@(() => registerParameters.UserName)" />
+
+    <label for="inputPassword" class="sr-only">Hasło</label>
+    <InputText type="password" id="inputPassword" class="form-control" placeholder="Hasło" @bind-Value="@registerParameters.Password" />
+    <ValidationMessage For="@(() => registerParameters.Password)" />
+
+    <label for="inputPasswordConfirm" class="sr-only">Potwierdź hasło</label>
+    <InputText type="password" id="inputPasswordConfirm" class="form-control" placeholder="Potwierdź hasło" @bind-Value="@registerParameters.PasswordConfirm" />
+    <ValidationMessage For="@(() => registerParameters.PasswordConfirm)" />
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Utwórz konto</button>
+
+    <label class="text-danger">@error</label>
+    <NavLink href="login">
+        <h6 class="font-weight-normal text-center">Masz już konto? Zaloguj się.</h6>
+    </NavLink>
+</EditForm>
+
+@functions{
+
+    RegisterParameters registerParameters { get; set; } = new RegisterParameters();
+    string error { get; set; }
+
+    async Task OnSubmit()
+    {
+        error = null;
+        try
+        {
+            await authStateProvider.Register(registerParameters);
+            navigationManager.NavigateTo("");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

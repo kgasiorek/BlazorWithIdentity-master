@@ -1,0 +1,50 @@
+﻿@page "/showplan"
+@using BlazorWithIdentity.Shared
+@using BlazorWithIdentity.Shared.Models
+@inject HttpClient Http
+@inject PlansService plansService
+
+<h1>Plan ważeń</h1>
+
+<p>W tym miejscu zobaczysz wszystkie zaawizowane samochody na kolejny tydzień.</p>
+
+<DxDataGrid Data="@plans"
+            ShowFilterRow="true"
+            CssClass="mw-1100">
+    <DxDataGridDateEditColumn Field="@nameof(Plan.Date)"
+                              DisplayFormatString="D"
+                              EditFormatString="d"
+                              Width="240px">
+    </DxDataGridDateEditColumn>
+
+    @*<DxDataGridSpinEditColumn Field="@nameof(Plan.Driver)"
+                                  DisplayFormatString="c"
+                                  Width="120px">
+        </DxDataGridSpinEditColumn>*@
+    <DxDataGridColumn Field="@nameof(Plan.Plate)">
+    </DxDataGridColumn>
+    <DxDataGridColumn Field="@nameof(Plan.Driver)">
+    </DxDataGridColumn>
+    <DxDataGridColumn Field="@nameof(Plan.Company)">
+    </DxDataGridColumn>
+    @*<DxDataGridCommandColumn NewButtonVisible="false"
+                                 EditButtonVisible="false"
+                                 DeleteButtonVisible="false"
+                                 Width="70px">
+        </DxDataGridCommandColumn>*@
+</DxDataGrid>
+
+@code {
+
+    IEnumerable<Plan> plans;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetPlansAsync();
+    }
+
+    async Task GetPlansAsync()
+    {
+        plans = await Http.GetJsonAsync<IEnumerable<Plan>>("api/Plans");
+    }
+}
