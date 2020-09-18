@@ -12,7 +12,8 @@
     <DxFormLayout>
         <DxFormLayoutItem Caption="Typ:" ColSpanMd="6">
             <Template>
-                <DxComboBox TData="OperationTypeRequest" TValue="OperationTypeRequest" Data="@operations"></DxComboBox>
+                <DxComboBox TData="OperationTypeRequest" TValue="OperationTypeRequest" Data="@operations"
+                           @bind-Text="@planRequest.Type"/>
             </Template>
         </DxFormLayoutItem>
 
