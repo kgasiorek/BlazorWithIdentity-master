@@ -12,12 +12,12 @@
     <DxFormLayout>
         <DxFormLayoutItem Caption="Typ:" ColSpanMd="6">
             <Template>
-                <DxComboBox TData="OperationType" TValue="OperationType" 
+                <DxComboBox TData="OperationType" TValue="string" 
                            Data="@operations"
                            TextFieldName="@nameof(OperationType.Type)"
                            ValueFieldName="@nameof(OperationType.TypeShort)"
-                           ValueExpression="@(() => value)"
-                           @bind-Text="@planRequest.Type"/>
+                           SelectedItemChanged="@((OperationType operation) => SelectedItem = operation)"
+                           @bind-Value="@planRequest.Type"/>
             </Template>
         </DxFormLayoutItem>
 
@@ -67,8 +67,8 @@
 
     bool SuccessPopupVisible = false;
     string message = "";
+    OperationType SelectedItem { get; set; } = null;
     IEnumerable<OperationType> operations;
-    OperationType value = null;
 
     protected override async Task OnInitializedAsync()
     {
