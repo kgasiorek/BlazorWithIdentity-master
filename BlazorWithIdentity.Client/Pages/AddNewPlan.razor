@@ -1,6 +1,7 @@
 ﻿@page "/addnewplan"
 @inject PlansService plansService
 @inject OperationTypeService operationTypeService
+@inject PlateEpcService platesEpcService
 @using BlazorWithIdentity.Shared.Models
 
 <div>
@@ -16,7 +17,7 @@
                            Data="@operations"
                            TextFieldName="@nameof(OperationType.Type)"
                            ValueFieldName="@nameof(OperationType.TypeShort)"
-                           SelectedItemChanged="@((OperationType operation) => SelectedItem = operation)"
+                           SelectedItemChanged="@((OperationType operation) => SelectedItemOperation = operation)"
                            @bind-Value="@planRequest.Type"/>
             </Template>
         </DxFormLayoutItem>
@@ -29,7 +30,12 @@
 
         <DxFormLayoutItem Caption="Rejestracja:" ColSpanMd="6">
             <Template>
-                <DxTextBox @bind-Text="@planRequest.Plate" />
+                <DxComboBox TData="PlateEpc" TValue="string"
+                            Data="@plates"
+                            TextFieldName="@nameof(PlateEpc.Plate)"
+                            ValueFieldName="@nameof(PlateEpc.Plate)"
+                            SelectedItemChanged="@((PlateEpc plate) => SelectedItemPlate = plate)"
+                            @bind-Value="@planRequest.Plate" />
             </Template>
         </DxFormLayoutItem>
 
@@ -67,17 +73,25 @@
 
     bool SuccessPopupVisible = false;
     string message = "";
-    OperationType SelectedItem { get; set; } = null;
+    OperationType SelectedItemOperation { get; set; } = null;
+    PlateEpc SelectedItemPlate { get; set; } = null;
     IEnumerable<OperationType> operations;
+    IEnumerable<PlateEpc> plates;
 
     protected override async Task OnInitializedAsync()
     {
         await GetOperationsAsync();
+        await GetPlatesAsync();
     }
 
     async Task GetOperationsAsync()
     {
         operations = await operationTypeService.GetOperationType();
+    }
+
+    async Task GetPlatesAsync()
+    {
+        plates = await platesEpcService.GetPlateEpcAsync();
     }
 
     PlanRequest planRequest = new PlanRequest()
