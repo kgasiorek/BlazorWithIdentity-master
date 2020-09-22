@@ -43,6 +43,12 @@ namespace BlazorWithIdentity.Server.Controllers
             return weightingPlan;
         }
 
+        [HttpGet("date/{date}")]
+        public async Task<ActionResult<IEnumerable<PlanRequest>>> GetWeightingPlanByDate(DateTime date)
+        {
+            return await _context.WeightingPlans.Where(s => s.Date == date).ToListAsync();
+        }
+
         // PUT: api/Plans/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
