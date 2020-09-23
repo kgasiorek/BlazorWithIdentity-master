@@ -1,16 +1,29 @@
 ﻿@page "/manualweighting"
 @using Microsoft.AspNetCore.SignalR.Client
-@inject Services.ServiceModus modbus
+@inject AWSC.SharedFramework.Services.ServiceModus modbus
 
 <h3>Ważenie ręczne - sterowanie</h3>
 
-<DxButton RenderStyle="@ButtonRenderStyle.Success" RenderStyleMode="@ButtonRenderStyleMode.Contained" Text="Zielone WJAZD" SizeMode="@SizeMode.Large" Click="@GreenEntry" />
-<DxButton RenderStyle="@ButtonRenderStyle.Danger" RenderStyleMode="@ButtonRenderStyleMode.Contained" Text="Czerwone WJAZD" SizeMode="@SizeMode.Large" Click="@RedEntry" />
+<DxButton RenderStyle="ButtonRenderStyle.Info" Text="Zielone WJAZD" SizeMode="@SizeMode.Large" Click="@GreenEntry" />
+<DxButton RenderStyle="ButtonRenderStyle.Info" Text="Czerwone WJAZD" SizeMode="@SizeMode.Large" Click="@RedEntry" />
+
+<DxPopup HeaderText="Udało się"
+         @bind-Visible="@SuccessPopupVisible">
+    <Content>
+        <p>
+            Operacja wykonana prawidłowo.
+        </p>
+    </Content>
+    <FooterTemplate>
+        <button class="btn btn-primary" @onclick="@(() => SuccessPopupVisible = false)">OK!</button>
+    </FooterTemplate>
+</DxPopup>
 
 @code {
     private static readonly int entry = 18, exit = 19, weightingPossibility = 22;
+    bool SuccessPopupVisible = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         modbus.EstablishConnection();
         CheckIsWeightingPossibilityClosed();
@@ -18,6 +31,8 @@
 
     private void GreenEntry()
     {
+        SuccessPopupVisible = true;
+        Console.WriteLine(entry.ToString());
         SetLightColorToGreen(entry);
     }
 

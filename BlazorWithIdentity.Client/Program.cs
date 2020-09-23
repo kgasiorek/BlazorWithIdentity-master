@@ -3,6 +3,7 @@ using BlazorWithIdentity.Client.Services.Implementations;
 using BlazorWithIdentity.Client.States;
 using BlazorWithIdentity.Shared;
 using BlazorWithIdentity.Shared.Services;
+using AWSC.SharedFramework.Services;
 using Microsoft.AspNetCore.Blazor.Hosting;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,11 @@ namespace BlazorWithIdentity.Client
             builder.Services.AddScoped<OperationTypeService>(s =>
             {
                 return new OperationTypeService();
+            });
+
+            builder.Services.AddScoped<ServiceModus>(s =>
+            {
+                return new ServiceModus();
             });
 
             var host = builder.Build();

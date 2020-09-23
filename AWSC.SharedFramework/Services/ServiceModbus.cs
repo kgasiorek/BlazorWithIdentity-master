@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net.Sockets;
 using Advantech.Adam;
 
-namespace BlazorWithIdentity.Client.Services
-{
+namespace AWSC.SharedFramework.Services
+{ 
     public class ServiceModus
     {
         private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -26,6 +24,7 @@ namespace BlazorWithIdentity.Client.Services
             adamModbus = new AdamSocket();
             adamModbus.SetTimeout(1000, 1000, 1000); // set timeout for TCP
             InitAdam6060();
+            Console.WriteLine("Połączono");
         }
 
         public bool WeightingPossibilityStatus()
@@ -94,7 +93,7 @@ namespace BlazorWithIdentity.Client.Services
             {
                 Logger.Error("Błąd w zmianie koloru światła, kod błędu {0}", e.ToString());
             }
-            Logger.Info("Zmieniam kolor światła {0} na {1}", EnterOrExitLight(entryOrExitSide), LightColor(iOnOff));
+            Console.WriteLine("Zmieniam kolor światła {0} na {1}", EnterOrExitLight(entryOrExitSide), LightColor(iOnOff));
         }
 
         public void RefreshDIO()

@@ -34,8 +34,27 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AWSC.SharedFramework\AWSC.SharedFramework.csproj" />
     <ProjectReference Include="..\BlazorWithIdentity.Client\BlazorWithIdentity.Client.csproj" />
     <ProjectReference Include="..\BlazorWithIdentity.Shared\BlazorWithIdentity.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Advantech.Adam">
+      <HintPath>..\BlazorWithIdentity.Client\References\Advantech.Adam.DLL</HintPath>
+    </Reference>
+    <Reference Include="Advantech.Common">
+      <HintPath>..\BlazorWithIdentity.Client\References\Advantech.Common.DLL</HintPath>
+    </Reference>
+    <Reference Include="Advantech.Graph">
+      <HintPath>..\BlazorWithIdentity.Client\References\Advantech.Graph.dll</HintPath>
+    </Reference>
+    <Reference Include="Advantech.Protocol">
+      <HintPath>..\BlazorWithIdentity.Client\References\Advantech.Protocol.DLL</HintPath>
+    </Reference>
+    <Reference Include="ClouReaderAPI">
+      <HintPath>..\BlazorWithIdentity.Client\References\ClouReaderAPI.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
