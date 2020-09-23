@@ -1,53 +1,121 @@
 ﻿@page "/manualweighting"
 @using Microsoft.AspNetCore.SignalR.Client
+@inject Services.ServiceModus modbus
 
+<h3>Ważenie ręczne - sterowanie</h3>
 
-<h3>ManualWeighting</h3>
-
-<h3>Status połączenia: @connectionStatus</h3>
-
-<button class=" = btn btn-success" @onclick="async () => await ConnectToServer()" disabled="@isConnected">Połącz</button>
-<div class="row">
-    <div class="col-4">
-        @foreach(var item in notifications)
-        {
-            <div class="row">
-                <p>@item</p>
-            </div>
-        }
-    </div>
-</div>
+<DxButton RenderStyle="@ButtonRenderStyle.Success" RenderStyleMode="@ButtonRenderStyleMode.Contained" Text="Zielone WJAZD" SizeMode="@SizeMode.Large" Click="@GreenEntry" />
+<DxButton RenderStyle="@ButtonRenderStyle.Danger" RenderStyleMode="@ButtonRenderStyleMode.Contained" Text="Czerwone WJAZD" SizeMode="@SizeMode.Large" Click="@RedEntry" />
 
 @code {
-    string url = "http://localhost:53414/notificationhub";
-    bool isConnected = false;
-    HubConnection _connection = null;
-    List<string> notifications = new List<string>();
-    string connectionStatus = "Rozłączono";
+    private static readonly int entry = 18, exit = 19, weightingPossibility = 22;
 
-    private async Task ConnectToServer()
+    protected override async Task OnInitializedAsync()
     {
-        _connection = new HubConnectionBuilder()
-            .WithUrl(url)
-            .Build();
-
-
-
-        await _connection.StartAsync();
-        isConnected = true;
-        connectionStatus = "Połączono";
-
-        _connection.Closed += async (s) =>
-        {
-            isConnected = false;
-            connectionStatus = "Rozłączono";
-            await _connection.StartAsync();
-            isConnected = true;
-        };
-        _connection.On<string>("notification", m =>
-        {
-            notifications.Add(m);
-            StateHasChanged();
-        });
+        modbus.EstablishConnection();
+        CheckIsWeightingPossibilityClosed();
     }
+
+    private void GreenEntry()
+    {
+        SetLightColorToGreen(entry);
+    }
+
+    private void RedEntry()
+    {
+        SetLightColorToRed(entry);
+    }
+
+
+    private void CheckIsWeightingPossibilityClosed()
+    {
+        if (IsWeightingPossibilityClosed())
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
+    #region Sterowanie
+    private void SetLightColorToGreen(int whichSideOfWeight)
+    {
+        modbus.ChangeLightColor(whichSideOfWeight, true);
+    }
+
+    private void SetLightColorToRed(int whichSideOfWeight)
+    {
+        modbus.ChangeLightColor(whichSideOfWeight, false);
+    }
+
+    private bool EntrySensorIsDisturbed()
+    {
+        return modbus.EntrySensorStatus();
+    }
+
+    private bool IsWeightingPossibilityClosed()
+    {
+        return modbus.WeightingPossibilityStatus();
+    }
+
+    private bool ExitSensorIsDisturbed()
+    {
+        return modbus.ExitSensorStatus();
+    }
+
+    private void WhileEntrySensorIsDisturbed(bool isDisturbed)
+    {
+        if (isDisturbed)
+        {
+            while (!EntrySensorIsDisturbed())
+            {
+
+            }
+        }
+        else
+        {
+            while (EntrySensorIsDisturbed())
+            {
+
+            }
+        }
+
+    }
+
+    private void WhileExitSensorIsDisturbed(bool isDisturbed)
+    {
+        if (isDisturbed)
+        {
+            while (!ExitSensorIsDisturbed())
+            {
+
+            }
+        }
+        else
+        {
+            while (ExitSensorIsDisturbed())
+            {
+
+            }
+        }
+    }
+
+
+    private void nLogConfig()
+    {
+        //var config = new NLog.Config.LoggingConfiguration();
+
+        // Targets where to log to: File and Console
+        //var logfile = new NLog.Targets.FileTarget("logfile") { FileName = @"d:\logi\file.txt" };
+        //var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
+
+        // Rules for mapping loggers to targets
+        //config.AddRule(LogLevel.Info, LogLevel.Fatal, logconsole);
+        //config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
+        //LogManager.Configuration = config;
+    }
+    #endregion
+}
 }
